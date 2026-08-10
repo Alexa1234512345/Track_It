@@ -1,1 +1,1732 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#635BFF">
+<title>Track It</title>
+
+<style>
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --text:#171923;
+  --muted:#777d8e;
+  --border:#e7e9f0;
+  --primary:#635bff;
+  --primary2:#817aff;
+  --primary-soft:#eeedff;
+  --green:#25b77a;
+  --red:#ef626f;
+  --shadow:0 12px 35px rgba(32,35,55,.08);
+  --radius:22px;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:active{transform:scale(.98)}
+
+.app{
+  max-width:1100px;
+  min-height:100vh;
+  margin:auto;
+  padding-bottom:100px;
+}
+
+.topbar{
+  height:82px;
+  padding:18px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  font-size:22px;
+  font-weight:850;
+}
+
+.logo{
+  width:43px;
+  height:43px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  display:grid;
+  place-items:center;
+  box-shadow:0 8px 20px rgba(99,91,255,.28);
+}
+
+.logo svg{
+  width:24px;
+  height:24px;
+}
+
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--primary-soft);
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+  font-weight:800;
+}
+
+.content{padding:0 24px}
+
+.page{display:none}
+.page.active{display:block}
+
+.hero{
+  position:relative;
+  overflow:hidden;
+  color:#fff;
+  padding:30px;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 90% 10%,rgba(255,255,255,.22),transparent 28%),
+    linear-gradient(135deg,#635bff,#817aff);
+  box-shadow:var(--shadow);
+}
+
+.hero h1{
+  margin:0 0 7px;
+  font-size:30px;
+  letter-spacing:-.5px;
+}
+
+.hero p{
+  margin:0;
+  color:#e9e8ff;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:13px;
+  margin-top:15px;
+}
+
+.stat{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+
+.stat strong{
+  display:block;
+  font-size:26px;
+  margin-bottom:4px;
+}
+
+.stat span{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:28px 0 13px;
+}
+
+.section-title h2{
+  margin:0;
+  font-size:19px;
+}
+
+.text-button{
+  border:0;
+  background:none;
+  color:var(--primary);
+  font-weight:800;
+}
+
+.quick-actions{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:11px;
+}
+
+.quick-actions button{
+  border:1px solid var(--border);
+  background:var(--card);
+  border-radius:19px;
+  padding:16px 8px;
+  color:var(--text);
+  box-shadow:var(--shadow);
+  font-weight:750;
+}
+
+.quick-icon{
+  width:28px;
+  height:28px;
+  margin:0 auto 8px;
+  color:var(--primary);
+}
+
+.quick-icon svg{
+  width:100%;
+  height:100%;
+}
+
+.tracker-list{
+  display:grid;
+  gap:13px;
+}
+
+.tracker{
+  width:100%;
+  border:1px solid var(--border);
+  background:var(--card);
+  border-radius:22px;
+  padding:17px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  text-align:left;
+  color:var(--text);
+  box-shadow:var(--shadow);
+  transition:.2s;
+}
+
+.tracker:hover{
+  transform:translateY(-2px);
+  box-shadow:0 15px 38px rgba(32,35,55,.11);
+}
+
+.tracker-icon{
+  width:55px;
+  height:55px;
+  flex-shrink:0;
+  border-radius:17px;
+  background:var(--primary-soft);
+  color:var(--primary);
+  display:grid;
+  place-items:center;
+}
+
+.tracker-icon svg{
+  width:27px;
+  height:27px;
+}
+
+.tracker-main{
+  flex:1;
+  min-width:0;
+}
+
+.tracker-main h3{
+  margin:0 0 5px;
+  font-size:16px;
+}
+
+.tracker-main p{
+  margin:0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.progress{
+  height:8px;
+  margin-top:10px;
+  background:#eceef4;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  border-radius:20px;
+  background:linear-gradient(90deg,var(--primary),var(--primary2));
+  transition:width .3s ease;
+}
+
+.percent{
+  color:var(--primary);
+  font-weight:850;
+  font-size:13px;
+}
+
+.primary{
+  border:0;
+  background:var(--primary);
+  color:white;
+  border-radius:14px;
+  padding:12px 17px;
+  font-weight:800;
+}
+
+.secondary{
+  border:0;
+  background:#eef0f5;
+  color:var(--text);
+  border-radius:14px;
+  padding:12px 17px;
+  font-weight:800;
+}
+
+.search{
+  margin:5px 0 14px;
+}
+
+.search input{
+  width:100%;
+  padding:14px 16px;
+  border:1px solid var(--border);
+  background:var(--card);
+  border-radius:16px;
+  outline:none;
+}
+
+.search input:focus{
+  border-color:var(--primary);
+}
+
+.categories{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  padding-bottom:4px;
+}
+
+.category{
+  white-space:nowrap;
+  border:1px solid var(--border);
+  background:var(--card);
+  border-radius:999px;
+  padding:9px 15px;
+}
+
+.category.active{
+  background:var(--primary-soft);
+  border-color:#d9d6ff;
+  color:var(--primary);
+  font-weight:800;
+}
+
+.insight{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:23px;
+  padding:21px;
+  box-shadow:var(--shadow);
+}
+
+.chart{
+  height:190px;
+  display:flex;
+  align-items:end;
+  gap:10px;
+  margin-top:20px;
+}
+
+.chart-column{
+  flex:1;
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.chart-bar{
+  min-height:8px;
+  border-radius:8px 8px 3px 3px;
+  background:linear-gradient(var(--primary2),var(--primary));
+  margin-bottom:8px;
+}
+
+.setting{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:19px;
+  padding:17px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:10px 0;
+  box-shadow:var(--shadow);
+}
+
+.setting small{
+  display:block;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.toggle{
+  width:48px;
+  height:28px;
+  padding:0;
+  border:0;
+  border-radius:30px;
+  background:#dfe1e8;
+}
+
+.toggle:after{
+  content:"";
+  display:block;
+  width:22px;
+  height:22px;
+  margin:3px;
+  background:white;
+  border-radius:50%;
+  transition:.2s;
+}
+
+.toggle.on{
+  background:var(--primary);
+}
+
+.toggle.on:after{
+  transform:translateX(20px);
+}
+
+.empty{
+  padding:35px 20px;
+  text-align:center;
+  color:var(--muted);
+  background:var(--card);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+}
+
+.bottom-nav{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:20;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(18px);
+  border-top:1px solid var(--border);
+}
+
+.nav{
+  max-width:720px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr 1fr 1fr;
+  align-items:center;
+  padding:8px 12px;
+}
+
+.nav button{
+  border:0;
+  background:none;
+  color:#858a99;
+  font-size:11px;
+  font-weight:800;
+  padding:6px 2px;
+}
+
+.nav button.active{
+  color:var(--primary);
+}
+
+.nav-icon{
+  width:22px;
+  height:22px;
+  margin:0 auto 3px;
+}
+
+.nav-icon svg{
+  width:100%;
+  height:100%;
+}
+
+.add-wrap{
+  display:flex;
+  justify-content:center;
+  margin-top:-22px;
+}
+
+.add-main{
+  width:58px!important;
+  height:58px;
+  border-radius:19px!important;
+  background:var(--primary)!important;
+  color:#fff!important;
+  box-shadow:0 10px 25px rgba(99,91,255,.35);
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  background:rgba(15,17,30,.55);
+}
+
+.modal.show{display:flex}
+
+.modal-card{
+  width:min(680px,100%);
+  padding:24px;
+  background:var(--card);
+  border-radius:28px 28px 0 0;
+}
+
+.modal-card h2{margin:0 0 20px}
+
+.field{margin:13px 0}
+
+.field label{
+  display:block;
+  font-size:13px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.field input,.field select{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--border);
+  background:#fafafe;
+  border-radius:14px;
+  outline:none;
+}
+
+.modal-actions{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+.modal-actions button{flex:1}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:94px;
+  z-index:100;
+  padding:12px 17px;
+  border-radius:14px;
+  background:#1b1d28;
+  color:#fff;
+  opacity:0;
+  pointer-events:none;
+  transform:translate(-50%,20px);
+  transition:.25s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+@media(max-width:760px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .quick-actions{grid-template-columns:repeat(2,1fr)}
+  .tracker-list{grid-template-columns:1fr}
+}
+
+@media(min-width:761px){
+  .tracker-list{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="topbar">
+
+  <div class="brand">
+
+```
+<div class="logo">
+  <svg viewBox="0 0 24 24" fill="none"
+       stroke="white" stroke-width="2.5"
+       stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12.5l4 4L19 6.5"/>
+  </svg>
+</div>
+
+Track It
+```
+
+  </div>
+
+  <div class="avatar">E</div>
+
+</header>
+
+<main class="content">
+
+<!-- HOME -->
+
+<section id="home" class="page active">
+
+  <div class="hero">
+    <h1 id="greeting">Good afternoon, Emma</h1>
+    <p id="today"></p>
+  </div>
+
+  <div class="stats">
+
+```
+<div class="stat">
+  <strong id="activeTrackers">0</strong>
+  <span>Active trackers</span>
+</div>
+
+<div class="stat">
+  <strong id="completedGoals">0</strong>
+  <span>Completed goals</span>
+</div>
+
+<div class="stat">
+  <strong id="streak">0</strong>
+  <span>Activity streak</span>
+</div>
+
+<div class="stat">
+  <strong id="overallProgress">0%</strong>
+  <span>Overall progress</span>
+</div>
+```
+
+  </div>
+
+  <div class="section-title">
+    <h2>Quick actions</h2>
+  </div>
+
+  <div class="quick-actions">
+
+```
+<button onclick="openModal()">
+  <div class="quick-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+  </div>
+  Add tracker
+</button>
+
+<button onclick="showPage('trackers')">
+  <div class="quick-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M5 12.5l4 4L19 6.5"/>
+    </svg>
+  </div>
+  Track
+</button>
+
+<button onclick="showPage('insights')">
+  <div class="quick-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round">
+      <path d="M5 19V10"/>
+      <path d="M12 19V5"/>
+      <path d="M19 19v-7"/>
+    </svg>
+  </div>
+  Insights
+</button>
+
+<button onclick="showPage('profile')">
+  <div class="quick-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20h-2.6v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H6v-2.6h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V5h2.6v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v2.6h-.1a1.7 1.7 0 0 0-1.6 1Z"/>
+    </svg>
+  </div>
+  Settings
+</button>
+```
+
+  </div>
+
+  <div class="section-title">
+    <h2>Your trackers</h2>
+    <button class="text-button" onclick="showPage('trackers')">
+      See all
+    </button>
+  </div>
+
+  <div id="homeTrackers" class="tracker-list"></div>
+
+</section>
+
+<!-- TRACKERS -->
+
+<section id="trackers" class="page">
+
+  <div class="section-title">
+    <h2>My Trackers</h2>
+
+```
+<button class="primary" onclick="openModal()">
+  Add
+</button>
+```
+
+  </div>
+
+  <div class="search">
+    <input id="search"
+           type="search"
+           placeholder="Search trackers..."
+           oninput="renderTrackers()">
+  </div>
+
+  <div class="categories">
+
+```
+<button class="category active"
+        onclick="setCategory('All',this)">
+  All
+</button>
+
+<button class="category"
+        onclick="setCategory('Habits',this)">
+  Habits
+</button>
+
+<button class="category"
+        onclick="setCategory('Goals',this)">
+  Goals
+</button>
+
+<button class="category"
+        onclick="setCategory('Health',this)">
+  Health
+</button>
+
+<button class="category"
+        onclick="setCategory('Study',this)">
+  Study
+</button>
+```
+
+  </div>
+
+  <div id="trackerList"
+       class="tracker-list"
+       style="margin-top:15px">
+  </div>
+
+</section>
+
+<!-- ADD -->
+
+<section id="add" class="page">
+
+  <div class="hero">
+    <h1>Create a tracker</h1>
+    <p>Track anything that matters to you.</p>
+  </div>
+
+  <div class="section-title">
+    <h2>Popular trackers</h2>
+  </div>
+
+  <div class="tracker-list">
+
+```
+<button class="tracker"
+        onclick="quickAdd('book','Books Read','Goals',20,'books')">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.8"
+         stroke-linejoin="round">
+      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/>
+      <path d="M4 5.5v16"/>
+      <path d="M8 7h8"/>
+      <path d="M8 11h8"/>
+    </svg>
+  </div>
+
+  <div class="tracker-main">
+    <h3>Books Read</h3>
+    <p>Track books toward a goal</p>
+  </div>
+
+</button>
+
+
+<button class="tracker"
+        onclick="quickAdd('drop','Water','Health',8,'glasses')">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.8"
+         stroke-linejoin="round">
+      <path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/>
+    </svg>
+  </div>
+
+  <div class="tracker-main">
+    <h3>Water</h3>
+    <p>Track daily water intake</p>
+  </div>
+
+</button>
+
+
+<button class="tracker"
+        onclick="quickAdd('activity','Exercise','Health',5,'sessions')">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round">
+      <path d="M6 8v8"/>
+      <path d="M3.5 10v4"/>
+      <path d="M18 8v8"/>
+      <path d="M20.5 10v4"/>
+      <path d="M6 12h12"/>
+    </svg>
+  </div>
+
+  <div class="tracker-main">
+    <h3>Exercise</h3>
+    <p>Track weekly exercise</p>
+  </div>
+
+</button>
+
+
+<button class="tracker"
+        onclick="quickAdd('study','Study','Study',10,'sessions')">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+      <path d="M4 5h16v14H4z"/>
+      <path d="M8 9h8"/>
+      <path d="M8 13h5"/>
+    </svg>
+  </div>
+
+  <div class="tracker-main">
+    <h3>Study</h3>
+    <p>Track study sessions</p>
+  </div>
+
+</button>
+
+
+<button class="tracker"
+        onclick="quickAdd('target','Personal Goal','Goals',100,'points')">
+
+  <div class="tracker-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="12" r="8"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="12" cy="12" r="1"/>
+    </svg>
+  </div>
+
+  <div class="tracker-main">
+    <h3>Personal Goal</h3>
+    <p>Create your own goal</p>
+  </div>
+
+</button>
+```
+
+  </div>
+
+</section>
+
+<!-- INSIGHTS -->
+
+<section id="insights" class="page">
+
+  <div class="section-title">
+    <h2>Your Insights</h2>
+  </div>
+
+  <div class="insight">
+
+```
+<h3>This week</h3>
+
+<p style="color:var(--muted)">
+  Your tracking activity
+</p>
+
+<div id="chart" class="chart"></div>
+```
+
+  </div>
+
+  <div class="stats">
+
+```
+<div class="stat">
+  <strong id="totalUpdates">0</strong>
+  <span>Total updates</span>
+</div>
+
+<div class="stat">
+  <strong id="averageProgress">0%</strong>
+  <span>Average progress</span>
+</div>
+```
+
+  </div>
+
+  <div class="section-title">
+    <h2>Summary</h2>
+  </div>
+
+  <div class="insight">
+
+```
+<strong id="summary">
+  Start tracking to see your insights.
+</strong>
+
+<p style="color:var(--muted)">
+  Track It turns your activity into simple progress
+  information so you can understand how you're doing.
+</p>
+```
+
+  </div>
+
+</section>
+
+<!-- PROFILE -->
+
+<section id="profile" class="page">
+
+  <div class="hero">
+    <h1>Emma</h1>
+    <p>Your Track It profile</p>
+  </div>
+
+  <div class="section-title">
+    <h2>Settings</h2>
+  </div>
+
+  <div class="setting">
+
+```
+<div>
+  <b>Notifications</b>
+  <small>Tracker reminders</small>
+</div>
+
+<button class="toggle on"
+        onclick="this.classList.toggle('on')">
+</button>
+```
+
+  </div>
+
+  <div class="setting">
+
+```
+<div>
+  <b>Dark mode</b>
+  <small>Coming soon</small>
+</div>
+
+<button class="toggle"
+        onclick="toast('Dark mode is coming soon')">
+</button>
+```
+
+  </div>
+
+  <div class="setting">
+
+```
+<div>
+  <b>Export data</b>
+  <small>Download your tracker data</small>
+</div>
+
+<button class="secondary"
+        onclick="exportData()">
+  Export
+</button>
+```
+
+  </div>
+
+  <div class="setting">
+
+```
+<div>
+  <b>Track It</b>
+  <small>Prototype version 1.0</small>
+</div>
+
+<div style="color:var(--green)">
+  <svg width="23" height="23"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2.5"
+       stroke-linecap="round">
+    <path d="M5 12.5l4 4L19 6.5"/>
+  </svg>
+</div>
+```
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- NAVIGATION -->
+
+<div class="bottom-nav">
+
+  <nav class="nav">
+
+```
+<button class="active"
+        data-page="home"
+        onclick="showPage('home',this)">
+
+  <div class="nav-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+      <path d="M3 11l9-8 9 8"/>
+      <path d="M5 10v10h14V10"/>
+      <path d="M9 20v-6h6v6"/>
+    </svg>
+  </div>
+
+  Home
+
+</button>
+
+
+<button data-page="trackers"
+        onclick="showPage('trackers',this)">
+
+  <div class="nav-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round"
+         stroke-linejoin="round">
+      <path d="M5 12.5l4 4L19 6.5"/>
+    </svg>
+  </div>
+
+  Trackers
+
+</button>
+
+
+<div class="add-wrap">
+  <button class="add-main"
+          onclick="showPage('add')">
+
+    <svg width="25" height="25"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="2.3"
+         stroke-linecap="round">
+      <path d="M12 5v14M5 12h14"/>
+    </svg>
+
+  </button>
+</div>
+
+
+<button data-page="insights"
+        onclick="showPage('insights',this)">
+
+  <div class="nav-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round">
+      <path d="M5 19V10"/>
+      <path d="M12 19V5"/>
+      <path d="M19 19v-7"/>
+    </svg>
+  </div>
+
+  Insights
+
+</button>
+
+
+<button data-page="profile"
+        onclick="showPage('profile',this)">
+
+  <div class="nav-icon">
+    <svg viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round">
+      <circle cx="12" cy="8" r="3"/>
+      <path d="M5 20c.8-3.4 3.2-5 7-5s6.2 1.6 7 5"/>
+    </svg>
+  </div>
+
+  Profile
+
+</button>
+```
+
+  </nav>
+
+</div>
+
+</div>
+
+<!-- MODAL -->
+
+<div id="modal"
+     class="modal"
+     onclick="if(event.target===this)closeModal()">
+
+  <div class="modal-card">
+
+```
+<h2>Create tracker</h2>
+
+<div class="field">
+  <label>Name</label>
+  <input id="trackerName"
+         placeholder="Example: Practice piano">
+</div>
+
+<div class="field">
+  <label>Category</label>
+
+  <select id="trackerCategory">
+    <option>Habits</option>
+    <option>Goals</option>
+    <option>Health</option>
+    <option>Study</option>
+  </select>
+
+</div>
+
+<div class="field">
+  <label>Goal</label>
+
+  <input id="trackerGoal"
+         type="number"
+         min="1"
+         value="10">
+
+</div>
+
+<div class="field">
+  <label>Unit</label>
+
+  <input id="trackerUnit"
+         placeholder="times, pages, minutes...">
+
+</div>
+
+<div class="modal-actions">
+
+  <button class="secondary"
+          onclick="closeModal()">
+    Cancel
+  </button>
+
+  <button class="primary"
+          onclick="createTracker()">
+    Create
+  </button>
+
+</div>
+```
+
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+
+const STORAGE_KEY="track-it-data-v2";
+
+let trackers=JSON.parse(
+  localStorage.getItem(STORAGE_KEY)
+)||[
+  {
+    id:1,
+    icon:"book",
+    name:"Books Read",
+    category:"Goals",
+    value:7,
+    goal:20,
+    unit:"books",
+    updates:7
+  },
+  {
+    id:2,
+    icon:"activity",
+    name:"Exercise",
+    category:"Health",
+    value:3,
+    goal:5,
+    unit:"sessions",
+    updates:3
+  },
+  {
+    id:3,
+    icon:"study",
+    name:"Study",
+    category:"Study",
+    value:12,
+    goal:20,
+    unit:"sessions",
+    updates:12
+  }
+];
+
+let currentCategory="All";
+
+
+const icons={
+
+  book:`
+    <svg viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.8"
+      stroke-linejoin="round">
+      <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/>
+      <path d="M4 5.5v16"/>
+      <path d="M8 7h8"/>
+      <path d="M8 11h8"/>
+    </svg>`,
+
+  drop:`
+    <svg viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.8"
+      stroke-linejoin="round">
+      <path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z"/>
+    </svg>`,
+
+  activity:`
+    <svg viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.8"
+      stroke-linecap="round">
+      <path d="M6 8v8"/>
+      <path d="M3.5 10v4"/>
+      <path d="M18 8v8"/>
+      <path d="M20.5 10v4"/>
+      <path d="M6 12h12"/>
+    </svg>`,
+
+  study:`
+    <svg viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M4 5h16v14H4z"/>
+      <path d="M8 9h8"/>
+      <path d="M8 13h5"/>
+    </svg>`,
+
+  target:`
+    <svg viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="12" r="8"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="12" cy="12" r="1"/>
+    </svg>`,
+
+  habit:`
+    <svg viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M5 12.5l4 4L19 6.5"/>
+    </svg>`
+
+};
+
+
+function saveData(){
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(trackers)
+  );
+}
+
+
+function percent(t){
+  return Math.min(
+    100,
+    Math.round((t.value/t.goal)*100)
+  );
+}
+
+
+function safe(text){
+  return String(text).replace(
+    /[&<>"']/g,
+    c=>({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[c])
+  );
+}
+
+
+function trackerCard(t){
+
+  const p=percent(t);
+
+  return `
+    <button class="tracker"
+      onclick="updateTracker(${t.id})">
+
+      <div class="tracker-icon">
+        ${icons[t.icon]||icons.habit}
+      </div>
+
+      <div class="tracker-main">
+
+        <h3>${safe(t.name)}</h3>
+
+        <p>
+          ${t.value} / ${t.goal}
+          ${safe(t.unit)}
+          · ${safe(t.category)}
+        </p>
+
+        <div class="progress">
+          <div class="progress-fill"
+               style="width:${p}%"></div>
+        </div>
+
+      </div>
+
+      <div class="percent">${p}%</div>
+
+    </button>
+  `;
+}
+
+
+function renderTrackers(){
+
+  const search=
+    document.getElementById("search");
+
+  const query=search
+    ? search.value.toLowerCase()
+    :"";
+
+  const filtered=trackers.filter(t=>{
+
+    const category=
+      currentCategory==="All"||
+      t.category===currentCategory;
+
+    const match=
+      t.name.toLowerCase().includes(query);
+
+    return category&&match;
+  });
+
+  const list=
+    document.getElementById("trackerList");
+
+  if(!list)return;
+
+  list.innerHTML=filtered.length
+    ?filtered.map(trackerCard).join("")
+    :`
+      <div class="empty">
+        No trackers found.
+        <br><br>
+        <button class="primary"
+                onclick="openModal()">
+          Create a tracker
+        </button>
+      </div>
+    `;
+}
+
+
+function renderHome(){
+
+  const active=trackers.length;
+
+  const completed=trackers.filter(
+    t=>t.value>=t.goal
+  ).length;
+
+  const average=trackers.length
+    ?Math.round(
+      trackers.reduce(
+        (a,t)=>a+percent(t),0
+      )/trackers.length
+    )
+    :0;
+
+  const updates=trackers.reduce(
+    (a,t)=>a+(t.updates||0),0
+  );
+
+  document.getElementById(
+    "activeTrackers"
+  ).textContent=active;
+
+  document.getElementById(
+    "completedGoals"
+  ).textContent=completed;
+
+  document.getElementById(
+    "overallProgress"
+  ).textContent=average+"%";
+
+  document.getElementById(
+    "streak"
+  ).textContent=updates;
+
+
+  const home=
+    document.getElementById("homeTrackers");
+
+  home.innerHTML=trackers.length
+    ?trackers.slice(0,3)
+      .map(trackerCard)
+      .join("")
+    :`
+      <div class="empty">
+        You don't have any trackers yet.
+        <br><br>
+        <button class="primary"
+                onclick="openModal()">
+          Create your first tracker
+        </button>
+      </div>
+    `;
+
+
+  document.getElementById(
+    "totalUpdates"
+  ).textContent=updates;
+
+  document.getElementById(
+    "averageProgress"
+  ).textContent=average+"%";
+
+  document.getElementById(
+    "summary"
+  ).textContent=trackers.length
+    ?`You're tracking ${trackers.length}
+      ${trackers.length===1?"thing":"things"}.
+      Your average progress is ${average}%.`
+    :"Start tracking to see your insights.";
+}
+
+
+function renderChart(){
+
+  const values=[35,52,43,72,58,84,68];
+  const days=["M","T","W","T","F","S","S"];
+
+  document.getElementById("chart").innerHTML=
+    values.map(
+      (v,i)=>`
+        <div class="chart-column">
+          <div class="chart-bar"
+               style="height:${v}%"></div>
+          ${days[i]}
+        </div>
+      `
+    ).join("");
+}
+
+
+function renderAll(){
+  renderHome();
+  renderTrackers();
+  renderChart();
+}
+
+
+function showPage(page,button){
+
+  document.querySelectorAll(".page")
+    .forEach(p=>p.classList.remove("active"));
+
+  document.getElementById(page)
+    .classList.add("active");
+
+  document.querySelectorAll(".nav button")
+    .forEach(b=>b.classList.remove("active"));
+
+  const nav=button||
+    document.querySelector(
+      `.nav button[data-page="${page}"]`
+    );
+
+  if(nav)nav.classList.add("active");
+
+  renderAll();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+
+function openModal(){
+
+  document.getElementById("modal")
+    .classList.add("show");
+
+  document.getElementById("trackerName")
+    .focus();
+}
+
+
+function closeModal(){
+
+  document.getElementById("modal")
+    .classList.remove("show");
+}
+
+
+function createTracker(){
+
+  const name=
+    document.getElementById("trackerName")
+      .value.trim();
+
+  if(!name){
+    toast("Please enter a tracker name");
+    return;
+  }
+
+  const category=
+    document.getElementById("trackerCategory")
+      .value;
+
+  const goal=
+    Number(
+      document.getElementById("trackerGoal")
+        .value
+    )||1;
+
+  const unit=
+    document.getElementById("trackerUnit")
+      .value.trim()||"times";
+
+  const icon={
+    Habits:"habit",
+    Goals:"target",
+    Health:"activity",
+    Study:"study"
+  }[category];
+
+  trackers.unshift({
+    id:Date.now(),
+    icon,
+    name,
+    category,
+    value:0,
+    goal,
+    unit,
+    updates:0
+  });
+
+  saveData();
+  closeModal();
+
+  document.getElementById("trackerName").value="";
+  document.getElementById("trackerGoal").value=10;
+  document.getElementById("trackerUnit").value="";
+
+  showPage("trackers");
+
+  toast("Tracker created");
+}
+
+
+function quickAdd(
+  icon,
+  name,
+  category,
+  goal,
+  unit
+){
+
+  trackers.unshift({
+    id:Date.now(),
+    icon,
+    name,
+    category,
+    value:0,
+    goal,
+    unit,
+    updates:0
+  });
+
+  saveData();
+  showPage("trackers");
+  toast("Tracker added");
+}
+
+
+function updateTracker(id){
+
+  const t=trackers.find(
+    item=>item.id===id
+  );
+
+  if(!t)return;
+
+  const amount=prompt(
+    `Update ${t.name}\n\nCurrent: ${t.value} ${t.unit}\n\nHow much should you add?`,
+    "1"
+  );
+
+  if(amount===null)return;
+
+  const number=Number(amount);
+
+  if(!Number.isFinite(number)||number<=0){
+    toast("Please enter a positive number");
+    return;
+  }
+
+  t.value=Math.min(
+    t.goal,
+    t.value+number
+  );
+
+  t.updates=(t.updates||0)+1;
+
+  saveData();
+  renderAll();
+
+  toast(
+    t.value>=t.goal
+      ?"Goal completed"
+      :"Progress updated"
+  );
+}
+
+
+function setCategory(category,button){
+
+  currentCategory=category;
+
+  document.querySelectorAll(".category")
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  renderTrackers();
+}
+
+
+function exportData(){
+
+  const blob=new Blob(
+    [JSON.stringify(trackers,null,2)],
+    {type:"application/json"}
+  );
+
+  const link=document.createElement("a");
+
+  link.href=URL.createObjectURL(blob);
+  link.download="track-it-data.json";
+
+  link.click();
+
+  URL.revokeObjectURL(link.href);
+
+  toast("Data exported");
+}
+
+
+function toast(message){
+
+  const element=
+    document.getElementById("toast");
+
+  element.textContent=message;
+  element.classList.add("show");
+
+  clearTimeout(window.trackToast);
+
+  window.trackToast=setTimeout(
+    ()=>element.classList.remove("show"),
+    2200
+  );
+}
+
+
+const now=new Date();
+const hour=now.getHours();
+
+document.getElementById("greeting")
+  .textContent=
+    (hour<12
+      ?"Good morning"
+      :hour<18
+        ?"Good afternoon"
+        :"Good evening")
+    +", Emma";
+
+
+document.getElementById("today")
+  .textContent=
+    now.toLocaleDateString(
+      undefined,
+      {
+        weekday:"long",
+        month:"long",
+        day:"numeric"
+      }
+    );
+
+
+renderAll();
+
+</script>
+
+</body>
+</html>
 
