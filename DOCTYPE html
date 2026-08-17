@@ -1,0 +1,4087 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Track It — Family Assistant</title>
+
+<style>
+:root{
+  --bg:#f0e5ef;
+  --surface:#fffafd;
+  --surface2:#f5edf5;
+  --text:#29242c;
+  --muted:#746b77;
+  --accent:#9d55b1;
+  --accent2:#ea9bd2;
+  --material:linear-gradient(145deg,#fff,#ead9ed);
+  --line:rgba(45,30,50,.09);
+  --shadow:0 15px 36px rgba(65,42,70,.14);
+  --press:0 7px 0 rgba(76,42,84,.14),0 14px 25px rgba(65,42,70,.10);
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:var(--bg);
+}
+
+body{
+  overflow-x:hidden;
+  transition:background .35s;
+}
+
+button,input,textarea,select{font:inherit}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+button:active{
+  transform:translateY(5px) scale(.98);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible{
+  outline:3px solid rgba(234,155,210,.7);
+  outline-offset:2px;
+}
+
+.hidden{display:none!important}
+
+/* APP */
+
+.app{
+  max-width:1320px;
+  margin:auto;
+  min-height:100vh;
+  padding:16px;
+  display:grid;
+  grid-template-columns:225px 1fr;
+  gap:16px;
+}
+
+.panel,
+.topbar,
+.card,
+.modal-box,
+.auth-box{
+  background:rgba(255,255,255,.90);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.9);
+  box-shadow:var(--shadow);
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  border-radius:29px;
+  padding:15px;
+  position:sticky;
+  top:16px;
+  height:calc(100vh - 32px);
+}
+
+.logo{
+  font-weight:950;
+  font-size:29px;
+  letter-spacing:-1.5px;
+  padding:9px 9px 22px;
+}
+
+.logo span{
+  color:var(--accent);
+}
+
+.nav{
+  display:grid;
+  gap:8px;
+}
+
+.nav button,
+.soft,
+.primary,
+.quick button,
+.theme-btn,
+.filter-btn{
+  background:var(--material);
+  color:var(--text);
+  box-shadow:var(--press);
+  border:1px solid rgba(255,255,255,.75);
+  border-radius:16px;
+  padding:12px 14px;
+  font-weight:900;
+  transition:
+    transform .13s ease,
+    filter .2s ease,
+    box-shadow .13s ease;
+}
+
+.nav button{
+  text-align:left;
+}
+
+.nav button.active,
+.primary{
+  background:linear-gradient(145deg,var(--accent2),var(--accent));
+  color:#fff;
+}
+
+.nav button:hover,
+.soft:hover,
+.primary:hover,
+.quick button:hover,
+.theme-btn:hover,
+.filter-btn:hover{
+  filter:brightness(1.03);
+}
+
+.mini{
+  position:absolute;
+  bottom:15px;
+  left:15px;
+  right:15px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:11px;
+  border-radius:18px;
+  background:rgba(255,255,255,.53);
+}
+
+.avatar{
+  width:43px;
+  height:43px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-weight:950;
+  background:linear-gradient(145deg,var(--accent2),var(--accent));
+  box-shadow:0 5px 0 rgba(70,35,75,.12);
+  overflow:hidden;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* MAIN */
+
+.main{
+  min-width:0;
+}
+
+.topbar{
+  border-radius:25px;
+  padding:15px 18px;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.top-title h1{
+  font-size:29px;
+  margin:0;
+  letter-spacing:-1px;
+}
+
+.top-title p{
+  font-size:12px;
+  margin:3px 0 0;
+  color:var(--muted);
+}
+
+.top-actions{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+/* VIEWS */
+
+.view{
+  display:none;
+}
+
+.view.active{
+  display:block;
+}
+
+/* HOME */
+
+.grid2{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:16px;
+}
+
+.grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.hero{
+  padding:24px;
+  border-radius:28px;
+  background:var(--material);
+  box-shadow:var(--press);
+  margin-bottom:16px;
+}
+
+.hero h2{
+  font-size:32px;
+  line-height:1.04;
+  margin:0 0 8px;
+  letter-spacing:-1.3px;
+}
+
+.hero p{
+  max-width:780px;
+  color:var(--muted);
+  margin:0;
+}
+
+.quick{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:17px;
+}
+
+.quick button{
+  text-align:left;
+}
+
+.card{
+  border-radius:26px;
+  padding:19px;
+  margin-bottom:16px;
+}
+
+.head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:13px;
+}
+
+.head h2{
+  margin:0;
+  font-size:20px;
+}
+
+.muted,
+small{
+  color:var(--muted);
+}
+
+.list{
+  display:grid;
+  gap:8px;
+}
+
+.row{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px;
+  border-radius:18px;
+  background:rgba(255,255,255,.70);
+  border:1px solid var(--line);
+}
+
+.grow{
+  flex:1;
+  min-width:0;
+}
+
+.dot{
+  width:9px;
+  height:41px;
+  border-radius:8px;
+  background:var(--accent);
+  flex:none;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+
+.stat{
+  background:rgba(255,255,255,.68);
+  padding:14px;
+  border-radius:18px;
+}
+
+.stat b{
+  display:block;
+  font-size:24px;
+}
+
+/* FORMS */
+
+.search,
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  padding:13px 14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.86);
+  outline:none;
+}
+
+.field textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.field{
+  margin:9px 0;
+}
+
+.field label{
+  display:block;
+  font-size:11px;
+  font-weight:900;
+  margin-bottom:5px;
+}
+
+/* FOOD */
+
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  margin-bottom:13px;
+}
+
+.tab-active{
+  background:linear-gradient(145deg,var(--accent2),var(--accent))!important;
+  color:#fff!important;
+}
+
+.foodgrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.food{
+  padding:11px;
+  border-radius:22px;
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--line);
+}
+
+.foodimg,
+.mealimg{
+  height:130px;
+  border-radius:18px;
+  background:linear-gradient(145deg,var(--surface2),#fff);
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  margin-bottom:10px;
+}
+
+.foodimg span,
+.mealimg span{
+  font-size:34px;
+  font-weight:950;
+  color:var(--accent);
+}
+
+/* CALENDAR */
+
+.calendar-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+
+.month{
+  font-size:23px;
+  font-weight:950;
+}
+
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:6px;
+}
+
+.dow{
+  text-align:center;
+  font-size:11px;
+  color:var(--muted);
+  font-weight:900;
+  padding:5px;
+}
+
+.day{
+  min-height:82px;
+  border-radius:15px;
+  background:rgba(255,255,255,.73);
+  border:1px solid var(--line);
+  padding:8px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.today{
+  outline:3px solid var(--accent2);
+}
+
+.chip{
+  font-size:9px;
+  padding:4px 5px;
+  border-radius:7px;
+  background:color-mix(in srgb,var(--accent2) 30%,transparent);
+  margin-top:5px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* PLANNER */
+
+.plan{
+  padding:15px;
+  border-radius:20px;
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--line);
+}
+
+.plan-step{
+  display:flex;
+  gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.badge{
+  display:inline-grid;
+  place-items:center;
+  min-width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#eee4ef;
+  font-size:11px;
+  font-weight:900;
+}
+
+.check{
+  width:22px;
+  height:22px;
+  border:2px solid var(--accent);
+  border-radius:7px;
+  background:transparent;
+  position:relative;
+}
+
+.check.done{
+  background:var(--accent);
+}
+
+.check.done:after{
+  content:"";
+  position:absolute;
+  width:8px;
+  height:4px;
+  border-left:2px solid white;
+  border-bottom:2px solid white;
+  transform:rotate(-45deg);
+  left:5px;
+  top:5px;
+}
+
+/* CHAT */
+
+.chat{
+  height:450px;
+  display:flex;
+  flex-direction:column;
+}
+
+.messages{
+  flex:1;
+  overflow:auto;
+  display:grid;
+  gap:8px;
+  padding:4px;
+}
+
+.bubble{
+  max-width:80%;
+  padding:10px 13px;
+  border-radius:18px;
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--line);
+}
+
+.me{
+  margin-left:auto;
+  background:linear-gradient(145deg,var(--accent2),var(--accent));
+  color:#fff;
+}
+
+.chatbar{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+.chatbar input{
+  flex:1;
+}
+
+/* FAMILY */
+
+.member{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:13px;
+  border-radius:18px;
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--line);
+}
+
+.member .avatar{
+  width:46px;
+  height:46px;
+}
+
+.badge-small{
+  padding:5px 9px;
+  border-radius:999px;
+  background:#eee4ef;
+  font-size:10px;
+  font-weight:900;
+}
+
+/* SETTINGS */
+
+.setting{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:15px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.setting:last-child{
+  border:0;
+}
+
+/* THEMES */
+
+.themegrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.theme-btn{
+  min-height:112px;
+  text-align:left;
+}
+
+.pink{
+  background:radial-gradient(circle at 28% 18%,#ffe7f4,#d57fc1 48%,#784d78);
+  color:#fff;
+}
+
+.gold{
+  background:linear-gradient(130deg,#65430b,#e5b83f,#fff1a1,#8a5d0e,#edc64e);
+  color:#fff;
+}
+
+.jelly{
+  background:linear-gradient(145deg,#fff,#8fc1ff);
+}
+
+.clay{
+  background:linear-gradient(145deg,#f6dac8,#c98266);
+}
+
+.plush{
+  background:radial-gradient(circle at 30% 20%,#ffe3f5,#bd70b2,#71486f);
+  color:#fff;
+}
+
+.holo{
+  background:linear-gradient(120deg,#a7efff,#efb2ff,#fff0a6,#b8ffd7);
+}
+
+.silver{
+  background:linear-gradient(135deg,#68717f,#f7f9fc,#929ba9,#fff);
+}
+
+.dark{
+  background:linear-gradient(145deg,#3b3843,#111);
+  color:#fff;
+}
+
+.material-preview{
+  margin-top:12px;
+  padding:15px;
+  border-radius:20px;
+  background:var(--material);
+  box-shadow:var(--press);
+}
+
+/* MODAL */
+
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(20,10,20,.42);
+  backdrop-filter:blur(9px);
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  padding:15px;
+  z-index:20;
+}
+
+.modal.open{
+  display:flex;
+}
+
+.modal-box{
+  width:min(740px,100%);
+  max-height:91vh;
+  overflow:auto;
+  border-radius:31px;
+  padding:22px;
+}
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:14px;
+}
+
+/* AUTH */
+
+.auth{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:16px;
+}
+
+.auth-box{
+  width:min(550px,100%);
+  padding:30px;
+  border-radius:31px;
+}
+
+.auth-box h1{
+  text-align:center;
+  font-size:40px;
+  margin:0;
+}
+
+.auth-box h1 span{
+  color:var(--accent);
+}
+
+.auth-box p{
+  text-align:center;
+  color:var(--muted);
+}
+
+.auth-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin:17px 0;
+}
+
+.auth-tabs button{
+  padding:12px;
+  border-radius:14px;
+  background:var(--surface2);
+  font-weight:900;
+}
+
+.auth-tabs button.on{
+  background:var(--accent);
+  color:#fff;
+}
+
+.invite-note{
+  padding:11px 12px;
+  border-radius:15px;
+  background:#f9eef8;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translate(-50%,20px);
+  opacity:0;
+  background:#29242c;
+  color:#fff;
+  padding:11px 16px;
+  border-radius:15px;
+  transition:.2s;
+  z-index:50;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+.results-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.result{
+  padding:14px;
+  border-radius:18px;
+  background:rgba(255,255,255,.70);
+  border:1px solid var(--line);
+}
+
+.result h4{
+  margin:0 0 4px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+  .app{
+    display:block;
+    padding:9px;
+  }
+
+  .sidebar{
+    position:static;
+    height:auto;
+    margin-bottom:10px;
+  }
+
+  .nav{
+    display:flex;
+    overflow:auto;
+  }
+
+  .nav button{
+    white-space:nowrap;
+  }
+
+  .mini{
+    display:none;
+  }
+
+  .grid2{
+    grid-template-columns:1fr;
+  }
+
+  .quick{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .foodgrid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .themegrid{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media(max-width:540px){
+  .topbar{
+    align-items:flex-start;
+  }
+
+  .top-actions .primary{
+    display:none;
+  }
+
+  .hero h2{
+    font-size:26px;
+  }
+
+  .day{
+    min-height:65px;
+    font-size:12px;
+  }
+
+  .chip{
+    display:none;
+  }
+
+  .results-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUTH -->
+<div id="auth" class="auth hidden">
+  <div class="auth-box">
+    <h1>Track<span> It</span></h1>
+    <p>Your family's plans, food, calendar and reminders in one place.</p>
+
+    <div class="auth-tabs">
+      <button id="loginTab" class="on" onclick="switchAuth('login')">Log in</button>
+      <button id="signupTab" onclick="switchAuth('signup')">Create family</button>
+    </div>
+
+    <div id="authBody"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app hidden">
+
+  <aside class="sidebar panel">
+    <div class="logo">Track<span> It</span></div>
+
+    <div class="nav">
+      <button data-view="home" class="active" onclick="go('home')">Home</button>
+      <button data-view="planner" onclick="go('planner')">Planner</button>
+      <button data-view="food" onclick="go('food')">Food</button>
+      <button data-view="calendar" onclick="go('calendar')">Calendar</button>
+      <button data-view="family" onclick="go('family')">Family</button>
+      <button data-view="chat" onclick="go('chat')">Chat</button>
+    </div>
+
+    <div class="mini">
+      <div class="avatar" id="miniAvatar">F</div>
+      <div>
+        <b id="miniName">Family</b>
+        <small>Family account</small>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <header class="topbar">
+      <div class="top-title">
+        <h1 id="pageTitle">Home</h1>
+        <p>Everything your family needs, in one place.</p>
+      </div>
+
+      <div class="top-actions">
+        <button class="soft" onclick="go('settings')">Settings</button>
+        <button class="primary" onclick="openEvent()">+ Event</button>
+      </div>
+    </header>
+
+    <!-- HOME -->
+    <section id="home" class="view active">
+
+      <div class="hero">
+        <h2 id="hello">Good morning</h2>
+        <p>
+          One fast place for planning, calendar, food, shopping,
+          reminders, family chat and travel.
+        </p>
+
+        <div class="quick">
+          <button onclick="openPlanner()">Plan something</button>
+          <button onclick="openQuickItem()">+ Item</button>
+          <button onclick="go('chat')">Family chat</button>
+          <button onclick="openAI()">Ask Track It AI</button>
+        </div>
+      </div>
+
+      <div class="grid2">
+
+        <div>
+
+          <div class="card">
+            <div class="head">
+              <h2>Today</h2>
+              <button class="soft" onclick="go('calendar')">Calendar</button>
+            </div>
+            <div id="todayList" class="list"></div>
+          </div>
+
+          <div class="card">
+            <div class="head">
+              <h2>Active plans</h2>
+              <button class="soft" onclick="openPlanner()">+ Plan</button>
+            </div>
+            <div id="homePlans" class="list"></div>
+          </div>
+
+        </div>
+
+        <div>
+
+          <div class="card">
+            <div class="head">
+              <h2>At a glance</h2>
+              <button class="soft" onclick="go('family')">Family</button>
+            </div>
+
+            <div class="stats">
+              <div class="stat">
+                <b id="eventCount">0</b>
+                <small>events</small>
+              </div>
+
+              <div class="stat">
+                <b id="reminderCount">0</b>
+                <small>reminders</small>
+              </div>
+
+              <div class="stat">
+                <b id="shoppingCount">0</b>
+                <small>shopping</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="head">
+              <h2>Kitchen</h2>
+              <button class="soft" onclick="go('food')">Open</button>
+            </div>
+            <div id="kitchen" class="list"></div>
+          </div>
+
+          <div class="card">
+            <b>While you're away</b>
+            <p class="muted">
+              Track It first checks what you already planned,
+              then looks for real nearby events that actually fit your free time.
+            </p>
+            <button class="primary" onclick="openTravel()">
+              Explore around my trip
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PLANNER -->
+    <section id="planner" class="view">
+      <div class="card">
+
+        <div class="head">
+          <div>
+            <h2>Planner</h2>
+            <div class="muted">
+              Tell Track It what you want in normal human language.
+            </div>
+          </div>
+
+          <button class="primary" onclick="openPlanner()">+ New plan</button>
+        </div>
+
+        <div id="plans" class="list"></div>
+
+      </div>
+    </section>
+
+    <!-- FOOD -->
+    <section id="food" class="view">
+      <div class="card">
+
+        <div class="head">
+          <div>
+            <h2>Food</h2>
+            <div class="muted">My Food, Shopping and Meals.</div>
+          </div>
+
+          <button class="primary" onclick="openQuickItem()">+ Item</button>
+        </div>
+
+        <div class="tabs">
+          <button id="tabInventory" class="soft tab-active" onclick="foodTab('inventory')">
+            My Food
+          </button>
+
+          <button id="tabShopping" class="soft" onclick="foodTab('shopping')">
+            Shopping
+          </button>
+
+          <button id="tabMeals" class="soft" onclick="foodTab('meals')">
+            Meals
+          </button>
+        </div>
+
+        <div id="foodBody"></div>
+
+      </div>
+    </section>
+
+    <!-- CALENDAR -->
+    <section id="calendar" class="view">
+      <div class="card">
+
+        <div class="calendar-head">
+          <button class="soft" onclick="changeMonth(-1)">Previous</button>
+          <div class="month" id="monthTitle"></div>
+          <button class="soft" onclick="changeMonth(1)">Next</button>
+        </div>
+
+        <div id="calendarGrid" class="calendar"></div>
+
+      </div>
+    </section>
+
+    <!-- FAMILY -->
+    <section id="family" class="view">
+      <div class="grid2">
+
+        <div class="card">
+          <div class="head">
+            <div>
+              <h2>Family account</h2>
+              <div class="muted" id="familyTitle"></div>
+            </div>
+
+            <button class="primary" onclick="openFamilyMember()">
+              + Family member
+            </button>
+          </div>
+
+          <div class="invite-note">
+            Each person has a name, email, username, Adult/Child status
+            and calendar colour. The production app sends the invitation email.
+          </div>
+
+          <div id="familyMembers" class="list" style="margin-top:10px"></div>
+        </div>
+
+        <div class="card">
+
+          <div class="head">
+            <h2>Upcoming together</h2>
+          </div>
+
+          <div id="familyUpcoming" class="list"></div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CHAT -->
+    <section id="chat" class="view">
+
+      <div class="card chat">
+
+        <div class="head">
+          <div>
+            <h2>Family Chat</h2>
+            <div class="muted">
+              Messages can become useful actions.
+            </div>
+          </div>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div class="chatbar">
+          <input
+            id="messageInput"
+            placeholder="Message your family..."
+            onkeydown="if(event.key==='Enter')sendMessage()"
+          >
+
+          <button class="primary" onclick="sendMessage()">
+            Send
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section id="profile" class="view">
+
+      <div class="card">
+
+        <h2 id="profileName">Profile</h2>
+
+        <p class="muted" id="profileUsername"></p>
+
+        <p>
+          <b>Email:</b>
+          <span id="profileEmail"></span>
+        </p>
+
+        <p>
+          <b>Family:</b>
+          <span id="profileFamily"></span>
+        </p>
+
+        <p>
+          <b>Adult/Child:</b>
+          <span id="profileRole"></span>
+        </p>
+
+        <button
+          class="soft"
+          onclick="toast('Profile photo upload connects in the production app.')"
+        >
+          Change profile photo
+        </button>
+
+      </div>
+    </section>
+
+    <!-- NOTIFICATIONS -->
+    <section id="notifications" class="view">
+
+      <div class="card">
+
+        <div class="head">
+
+          <div>
+            <h2>Notifications & Reminders</h2>
+            <div class="muted">
+              Production iOS/Android builds will show reminders outside the app.
+            </div>
+          </div>
+
+          <button class="primary" onclick="enableNotifications()">
+            Enable
+          </button>
+
+        </div>
+
+        <div id="notificationsList" class="list"></div>
+
+      </div>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="settings" class="view">
+
+      <div class="card">
+
+        <div class="head">
+
+          <div>
+            <h2>Settings</h2>
+            <div class="muted">
+              Personalize the entire Track It experience.
+            </div>
+          </div>
+
+          <button class="primary" onclick="openTheme()">
+            AI Theme Maker
+          </button>
+
+        </div>
+
+        <div class="setting">
+
+          <div>
+            <b>AI Theme Maker</b>
+            <small>
+              Material, texture, depth, colours, lighting, animations and sounds.
+            </small>
+          </div>
+
+          <button class="soft" onclick="openTheme()">
+            Open
+          </button>
+
+        </div>
+
+        <div class="setting">
+
+          <div>
+            <b>Theme sounds</b>
+            <small>
+              Slime squishes, plush taps, metallic gold clicks and more.
+            </small>
+          </div>
+
+          <button id="soundButton" class="soft" onclick="toggleSounds()">
+            On
+          </button>
+
+        </div>
+
+        <div class="setting">
+
+          <div>
+            <b>Phone notifications</b>
+            <small>
+              Reminders and events outside Track It.
+            </small>
+          </div>
+
+          <button class="soft" onclick="enableNotifications()">
+            Enable
+          </button>
+
+        </div>
+
+        <div class="setting">
+
+          <div>
+            <b>Family account</b>
+            <small>
+              Members, invitation emails, usernames, Adult/Child status and family password.
+            </small>
+          </div>
+
+          <button class="soft" onclick="go('family')">
+            Manage
+          </button>
+
+        </div>
+
+        <div class="setting">
+
+          <div>
+            <b>My profile</b>
+            <small>
+              Email, username, role and personal preferences.
+            </small>
+          </div>
+
+          <button class="soft" onclick="go('profile')">
+            Open
+          </button>
+
+        </div>
+
+        <button class="soft" style="margin-top:12px" onclick="logout()">
+          Log out
+        </button>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div id="modalBox" class="modal-box"></div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+
+/* =========================================
+   DATA
+========================================= */
+
+const STORAGE_KEY = "track-it-full-app";
+
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+
+let authMode = "login";
+let signupStep = 1;
+let calendarDate = new Date();
+let soundEnabled = true;
+
+if(!state){
+
+  state = {
+
+    user:{
+      name:"",
+      username:"",
+      email:"",
+      role:"Adult",
+      calendarColor:"#9d55b1"
+    },
+
+    family:{
+      name:"",
+      password:"",
+      members:[]
+    },
+
+    food:[
+      {
+        name:"Milk",
+        qty:"2 cartons",
+        category:"Food"
+      },
+      {
+        name:"Apples",
+        qty:"6",
+        category:"Food"
+      },
+      {
+        name:"Chicken",
+        qty:"1 pack",
+        category:"Food"
+      },
+      {
+        name:"Pasta",
+        qty:"2 packs",
+        category:"Food"
+      }
+    ],
+
+    shopping:[
+      "Parmesan",
+      "Garlic"
+    ],
+
+    events:[
+      {
+        title:"Football practice",
+        date:"2026-08-15",
+        time:"15:30",
+        person:"Mum",
+        color:"#4aa887",
+        type:"Sports"
+      },
+      {
+        title:"Family dinner",
+        date:"2026-08-15",
+        time:"18:00",
+        person:"Family",
+        color:"#9d55b1",
+        type:"Family"
+      },
+      {
+        title:"Flight to London",
+        date:"2026-08-20",
+        time:"09:20",
+        person:"Emma",
+        color:"#6c8ee8",
+        type:"Flight"
+      }
+    ],
+
+    reminders:[
+      {
+        title:"Pack football shoes",
+        date:"2026-08-15",
+        time:"14:45"
+      },
+      {
+        title:"Check flight details",
+        date:"2026-08-19",
+        time:"18:00"
+      }
+    ],
+
+    plans:[],
+
+    messages:[
+      {
+        name:"Mum",
+        text:"I added the family dinner to the calendar."
+      },
+      {
+        name:"Dad",
+        text:"Can someone add toothpaste to shopping?"
+      }
+    ],
+
+    favourites:[],
+
+    theme:"pink"
+
+  };
+
+}
+
+/* =========================================
+   HELPERS
+========================================= */
+
+const $ = id => document.getElementById(id);
+
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+}
+
+function toast(message){
+
+  $("toast").textContent = message;
+
+  $("toast").classList.add("show");
+
+  setTimeout(()=>{
+    $("toast").classList.remove("show");
+  },2200);
+
+}
+
+function openModal(){
+  $("modal").classList.add("open");
+}
+
+function closeModal(){
+  $("modal").classList.remove("open");
+}
+
+$("modal").addEventListener("click",e=>{
+  if(e.target.id==="modal"){
+    closeModal();
+  }
+});
+
+function safe(value){
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function escapeAttr(value){
+  return String(value).replace(/'/g,"\\'");
+}
+
+/* =========================================
+   AUTH
+========================================= */
+
+function switchAuth(mode){
+
+  authMode = mode;
+  signupStep = 1;
+
+  $("loginTab").classList.toggle("on",mode==="login");
+  $("signupTab").classList.toggle("on",mode==="signup");
+
+  renderAuth();
+
+}
+
+function renderAuth(){
+
+  if(authMode==="login"){
+
+    $("authBody").innerHTML = `
+
+      <div class="field">
+        <label>Username</label>
+        <input id="loginUsername" placeholder="Your username">
+      </div>
+
+      <div class="field">
+        <label>Family password</label>
+        <input id="loginPassword" type="password" placeholder="Family password">
+      </div>
+
+      <button class="primary" style="width:100%" onclick="login()">
+        Log in
+      </button>
+
+      <p style="font-size:12px">
+        Family members use their username and the shared family password.
+      </p>
+
+    `;
+
+  }else if(signupStep===1){
+
+    $("authBody").innerHTML = `
+
+      <div class="field">
+        <label>Your email</label>
+        <input id="signupEmail" type="email" placeholder="you@example.com">
+      </div>
+
+      <div class="field">
+        <label>Username</label>
+        <input id="signupUsername" placeholder="Choose a username">
+      </div>
+
+      <button class="primary" style="width:100%" onclick="signupNext()">
+        Next
+      </button>
+
+    `;
+
+  }else if(signupStep===2){
+
+    $("authBody").innerHTML = `
+
+      <div class="field">
+        <label>Family name</label>
+        <input id="familyNameInput" placeholder="The Smith Family">
+      </div>
+
+      <div class="field">
+        <label>Family password</label>
+        <input id="familyPassword" type="password" placeholder="Create a shared password">
+      </div>
+
+      <button class="primary" style="width:100%" onclick="signupNext()">
+        Next
+      </button>
+
+    `;
+
+  }else{
+
+    $("authBody").innerHTML = `
+
+      <div class="field">
+        <label>Your name</label>
+        <input id="signupName" placeholder="Your name">
+      </div>
+
+      <div class="field">
+        <label>Are you an adult?</label>
+        <select id="signupRole">
+          <option>Adult</option>
+          <option>Child</option>
+          <option>Grandparent</option>
+        </select>
+      </div>
+
+      <button class="primary" style="width:100%" onclick="finishSignup()">
+        Create family account
+      </button>
+
+    `;
+
+  }
+
+}
+
+function signupNext(){
+
+  if(signupStep===1){
+
+    const email = $("signupEmail").value.trim();
+    const username = $("signupUsername").value.trim();
+
+    if(!email || !username){
+      return toast("Enter your email and username.");
+    }
+
+    state.user.email = email;
+    state.user.username = username;
+
+    signupStep = 2;
+
+  }else{
+
+    const familyName = $("familyNameInput").value.trim();
+    const password = $("familyPassword").value;
+
+    if(!familyName || password.length<4){
+      return toast("Add a family name and a 4+ character password.");
+    }
+
+    state.family.name = familyName;
+    state.family.password = password;
+
+    signupStep = 3;
+
+  }
+
+  renderAuth();
+
+}
+
+function finishSignup(){
+
+  state.user.name =
+    $("signupName").value.trim() ||
+    state.user.username;
+
+  state.user.role =
+    $("signupRole").value;
+
+  state.family.members = [
+
+    {
+      name:state.user.name,
+      email:state.user.email,
+      username:state.user.username,
+      role:state.user.role,
+      color:state.user.calendarColor
+    }
+
+  ];
+
+  save();
+  enterApp();
+
+}
+
+function login(){
+
+  const username =
+    $("loginUsername").value.trim();
+
+  const password =
+    $("loginPassword").value;
+
+  if(!username || !password){
+    return toast("Enter username and family password.");
+  }
+
+  if(
+    state.family.password &&
+    password !== state.family.password
+  ){
+    return toast("Family password is incorrect.");
+  }
+
+  state.user.username = username;
+
+  save();
+  enterApp();
+
+}
+
+function enterApp(){
+
+  $("auth").classList.add("hidden");
+  $("app").classList.remove("hidden");
+
+  applyTheme(state.theme);
+
+  renderAll();
+
+}
+
+function logout(){
+
+  $("app").classList.add("hidden");
+  $("auth").classList.remove("hidden");
+
+  switchAuth("login");
+
+}
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+function go(view){
+
+  document
+    .querySelectorAll(".view")
+    .forEach(v=>v.classList.remove("active"));
+
+  $(view).classList.add("active");
+
+  document
+    .querySelectorAll(".nav button")
+    .forEach(b=>{
+      b.classList.toggle(
+        "active",
+        b.dataset.view===view
+      );
+    });
+
+  const titles={
+
+    home:"Home",
+    planner:"Planner",
+    food:"Food",
+    calendar:"Calendar",
+    family:"Family",
+    chat:"Family Chat",
+    profile:"My Profile",
+    notifications:"Notifications",
+    settings:"Settings"
+
+  };
+
+  $("pageTitle").textContent =
+    titles[view] || "Track It";
+
+  if(view==="planner") renderPlans();
+  if(view==="food") foodTab("inventory");
+  if(view==="calendar") renderCalendar();
+  if(view==="family") renderFamily();
+  if(view==="chat") renderChat();
+  if(view==="profile") renderProfile();
+  if(view==="notifications") renderNotifications();
+
+}
+
+/* =========================================
+   RENDER
+========================================= */
+
+function renderAll(){
+
+  const hour =
+    new Date().getHours();
+
+  const greeting =
+    hour<12
+      ? "Good morning"
+      : hour<18
+        ? "Good afternoon"
+        : "Good evening";
+
+  $("hello").textContent =
+    greeting +
+    (state.user.name
+      ? ", "+state.user.name
+      : "");
+
+  $("miniName").textContent =
+    state.user.name ||
+    state.user.username ||
+    "Family";
+
+  $("miniAvatar").textContent =
+    (state.user.name || "F")
+      .charAt(0)
+      .toUpperCase();
+
+  $("eventCount").textContent =
+    state.events.length;
+
+  $("reminderCount").textContent =
+    state.reminders.length;
+
+  $("shoppingCount").textContent =
+    state.shopping.length;
+
+  renderToday();
+  renderPlans();
+  foodTab("inventory");
+  renderCalendar();
+  renderFamily();
+  renderChat();
+  renderProfile();
+  renderNotifications();
+
+}
+
+/* =========================================
+   HOME
+========================================= */
+
+function renderToday(){
+
+  const today =
+    new Date()
+      .toISOString()
+      .slice(0,10);
+
+  const events =
+    state.events.filter(
+      e=>e.date===today
+    );
+
+  const reminders =
+    state.reminders.filter(
+      r=>r.date===today
+    );
+
+  let html="";
+
+  events.forEach(event=>{
+
+    html+=`
+
+      <div class="row">
+
+        <i
+          class="dot"
+          style="background:${event.color}">
+        </i>
+
+        <div class="grow">
+
+          <b>
+            ${safe(event.time)}
+            ·
+            ${safe(event.title)}
+          </b>
+
+          <small>
+            ${safe(event.person)}
+            ·
+            ${safe(event.type)}
+          </small>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  reminders.forEach(reminder=>{
+
+    html+=`
+
+      <div class="row">
+
+        <i
+          class="dot"
+          style="background:#dfa44f">
+        </i>
+
+        <div class="grow">
+
+          <b>
+            ${safe(reminder.time)}
+            ·
+            ${safe(reminder.title)}
+          </b>
+
+          <small>Reminder</small>
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  $("todayList").innerHTML =
+    html ||
+    `<span class="muted">
+      Nothing scheduled today.
+    </span>`;
+
+  $("kitchen").innerHTML =
+    state.food
+      .slice(0,4)
+      .map(food=>`
+
+        <div class="row">
+
+          <div class="grow">
+
+            <b>${safe(food.name)}</b>
+
+            <small>
+              ${safe(food.qty)}
+            </small>
+
+          </div>
+
+          <button
+            class="soft"
+            onclick="markUsed('${escapeAttr(food.name)}')">
+            Used
+          </button>
+
+        </div>
+
+      `)
+      .join("");
+
+  $("homePlans").innerHTML =
+    state.plans
+      .slice(0,3)
+      .map(plan=>`
+
+        <div class="plan">
+
+          <b>
+            ${safe(plan.title)}
+          </b>
+
+          <small>
+            ${safe(plan.when)}
+          </small>
+
+        </div>
+
+      `)
+      .join("") ||
+      `<span class="muted">
+        No active plans yet.
+      </span>`;
+
+}
+
+/* =========================================
+   EVENTS
+========================================= */
+
+function openEvent(){
+
+  $("modalBox").innerHTML=`
+
+    <h2>Add event</h2>
+
+    <div class="field">
+      <label>What is happening?</label>
+      <input
+        id="eventTitle"
+        placeholder="Meeting, birthday, football, flight..."
+      >
+    </div>
+
+    <div class="grid3">
+
+      <div class="field">
+        <label>Date</label>
+        <input id="eventDate" type="date">
+      </div>
+
+      <div class="field">
+        <label>Time</label>
+        <input id="eventTime" type="time" value="18:00">
+      </div>
+
+      <div class="field">
+        <label>Type</label>
+        <select id="eventType">
+          <option>Event</option>
+          <option>Meeting</option>
+          <option>Birthday</option>
+          <option>Sports</option>
+          <option>Flight</option>
+          <option>Hotel</option>
+          <option>Pickup</option>
+          <option>Appointment</option>
+          <option>Reminder</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="field">
+      <label>Who?</label>
+      <input
+        id="eventPerson"
+        placeholder="Family member or Family"
+      >
+    </div>
+
+    <div class="actions">
+
+      <button
+        class="soft"
+        onclick="closeModal()">
+        Cancel
+      </button>
+
+      <button
+        class="primary"
+        onclick="saveEvent()">
+        Save event
+      </button>
+
+    </div>
+
+  `;
+
+  openModal();
+
+}
+
+function saveEvent(){
+
+  const title =
+    $("eventTitle")
+      .value
+      .trim();
+
+  if(!title){
+    return toast(
+      "Give the event a name."
+    );
+  }
+
+  const person =
+    $("eventPerson")
+      .value
+      .trim() ||
+    "Family";
+
+  const member =
+    state.family.members
+      .find(
+        m=>m.name===person
+      );
+
+  const color =
+    person==="Family"
+      ? "#9d55b1"
+      : member?.color || "#9d55b1";
+
+  state.events.push({
+
+    title,
+
+    date:
+      $("eventDate").value,
+
+    time:
+      $("eventTime").value,
+
+    person,
+
+    color,
+
+    type:
+      $("eventType").value
+
+  });
+
+  save();
+
+  closeModal();
+  renderAll();
+
+  toast("Event added");
+
+}
+
+/* =========================================
+   SMART PLANNER
+========================================= */
+
+function openPlanner(){
+
+  $("modalBox").innerHTML=`
+
+    <h2>Plan something</h2>
+
+    <p class="muted">
+
+      Write it like you would say it to a person.
+      The production AI should understand the goal,
+      date, people, constraints and existing schedule,
+      then ask only the important missing questions.
+
+    </p>
+
+    <div class="field">
+
+      <label>What do you want to plan?</label>
+
+      <textarea
+        id="plannerRequest"
+        placeholder="Plan a sleepover for 6 people next Saturday..."
+      ></textarea>
+
+    </div>
+
+    <div class="field">
+
+      <label>Anything else you already know?</label>
+
+      <input
+        id="plannerExtra"
+        placeholder="Location, guests, food, budget, activities..."
+      >
+
+    </div>
+
+    <div class="actions">
+
+      <button
+        class="soft"
+        onclick="closeModal()">
+        Cancel
+      </button>
+
+      <button
+        class="primary"
+        onclick="buildSmartPlan()">
+        Build plan
+      </button>
+
+    </div>
+
+  `;
+
+  openModal();
+
+}
+
+function buildSmartPlan(){
+
+  const text =
+    $("plannerRequest")
+      .value
+      .trim();
+
+  if(!text){
+    return toast(
+      "Tell Track It what you want to plan."
+    );
+  }
+
+  const lower =
+    text.toLowerCase();
+
+  let steps=[];
+
+  if(lower.includes("sleepover")){
+
+    steps=[
+      "Confirm guests and host",
+      "Choose arrival and pickup times",
+      "Check existing calendar for conflicts",
+      "Plan dinner, snacks and drinks",
+      "Check My Food",
+      "Add missing items to Shopping",
+      "Choose activities or movie",
+      "Set reminders",
+      "Final check"
+    ];
+
+  }else if(lower.includes("birthday")){
+
+    steps=[
+      "Guest list",
+      "Find a date/time that works",
+      "Check family calendar",
+      "Choose food and cake",
+      "Plan activities",
+      "Build shopping list",
+      "Send invitations",
+      "Set reminders",
+      "Final check"
+    ];
+
+  }else if(
+    lower.includes("trip") ||
+    lower.includes("holiday") ||
+    lower.includes("vacation")
+  ){
+
+    steps=[
+      "Dates and destination",
+      "Check existing flights and hotels",
+      "Calculate travel time",
+      "Plan free-time windows",
+      "Find real nearby events",
+      "Plan food and packing",
+      "Set reminders",
+      "Final itinerary"
+    ];
+
+  }else{
+
+    steps=[
+      "Understand the goal",
+      "Check existing plans",
+      "Choose people and timing",
+      "Identify anything needed",
+      "Add Food or Shopping items",
+      "Create calendar items",
+      "Set reminders",
+      "Final check"
+    ];
+
+  }
+
+  state.plans.unshift({
+
+    title:text,
+
+    when:"Active plan",
+
+    extra:
+      $("plannerExtra")
+        .value
+        .trim(),
+
+    steps
+
+  });
+
+  save();
+  closeModal();
+  renderAll();
+  go("planner");
+
+  toast("Plan created");
+
+}
+
+function renderPlans(){
+
+  $("plans").innerHTML =
+    state.plans
+      .map(
+        (plan,index)=>`
+
+          <div class="plan">
+
+            <div class="head">
+
+              <div>
+
+                <b>
+                  ${safe(plan.title)}
+                </b>
+
+                <small>
+                  ${safe(plan.when)}
+                </small>
+
+              </div>
+
+              <button
+                class="soft"
+                onclick="openPlanDetails(${index})">
+                Open
+              </button>
+
+            </div>
+
+            ${
+              plan.steps
+                .map(
+                  (step,index)=>`
+
+                    <div class="plan-step">
+
+                      <button
+                        class="check"
+                        onclick="this.classList.toggle('done')">
+                      </button>
+
+                      <span class="badge">
+                        ${index+1}
+                      </span>
+
+                      <div>
+
+                        <b>
+                          ${safe(step)}
+                        </b>
+
+                        <small
+                          style="display:block">
+                          Connect to calendar,
+                          reminders,
+                          food or shopping.
+                        </small>
+
+                      </div>
+
+                    </div>
+
+                  `
+                )
+                .join("")
+            }
+
+          </div>
+
+        `
+      )
+      .join("") ||
+
+    `<span class="muted">
+      No plans yet.
+      Try “Plan a sleepover next Saturday.”
+    </span>`;
+
+}
+
+function openPlanDetails(index){
+
+  const plan=
+    state.plans[index];
+
+  $("modalBox").innerHTML=`
+
+    <h2>
+      ${safe(plan.title)}
+    </h2>
+
+    <p class="muted">
+      ${safe(plan.when)}
+    </p>
+
+    ${
+      plan.steps
+        .map(
+          (step,index)=>`
+
+            <div class="row">
+
+              <button
+                class="check"
+                onclick="this.classList.toggle('done')">
+              </button>
+
+              <div class="grow">
+
+                <b>
+                  ${index+1}.
+                  ${safe(step)}
+                </b>
+
+              </div>
+
+            </div>
+
+          `
+        )
+        .join("")
+    }
+
+    <div class="actions">
+
+      <button
+        class="primary"
+        onclick="closeModal()">
+        Done
+      </button>
+
+    </div>
+
+  `;
+
+  openModal();
+
+}
+
+/* =========================================
+   QUICK ITEM
+========================================= */
+
+function openQuickItem(){
+
+  $("modalBox").innerHTML=`
+
+    <h2>+ Item</h2>
+
+    <p class="muted">
+
+      Quickly add food or an everyday shopping item.
+      Toothpaste, batteries, toiletries and household items all work.
+
+    </p>
+
+    <div class="field">
+
+      <label>Item</label>
+
+      <input
+        id="quickItemName"
+        placeholder="Toothpaste, milk, batteries..."
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label>Quantity</label>
+
+      <input
+        id="quickItemQty"
+        placeholder="1"
+      >
+
+    </div>
+
+    <div class="actions">
+
+      <button
+        class="soft"
+        onclick="closeModal()">
+        Cancel
+      </button>
+
+      <button
+        class="primary"
+        onclick="addQuickItem()">
+        Add item
+      </button>
+
+    </div>
+
+  `;
+
+  openModal();
+
+}
+
+function addQuickItem(){
+
+  const name=
+    $("quickItemName")
+      .value
+      .trim();
+
+  if(!name){
+    return toast(
+      "Enter an item."
+    );
+  }
+
+  state.food.push({
+
+    name,
+
+    qty:
+      $("quickItemQty")
+        .value ||
+      "1",
+
+    category:
+      "Household"
+
+  });
+
+  save();
+  closeModal();
+  renderAll();
+
+  toast(
+    name+" added"
+  );
+
+}
+
+/* =========================================
+   FOOD
+========================================= */
+
+function markUsed(name){
+
+  const index=
+    state.food.findIndex(
+      food=>food.name===name
+    );
+
+  if(index<0){
+    return;
+  }
+
+  state.shopping.push(name);
+
+  state.food.splice(
+    index,
+    1
+  );
+
+  save();
+  renderAll();
+
+  toast(
+    name+
+    " moved to Shopping"
+  );
+
+}
+
+function filterFood(query){
+
+  document
+    .querySelectorAll("#foodGrid .food")
+    .forEach(card=>{
+
+      card.style.display =
+        card.dataset.name
+          .includes(
+            query
+              .toLowerCase()
+          )
+          ? ""
+          : "none";
+
+    });
+
+}
+
+function completeShopping(index,button){
+
+  button.classList.toggle(
+    "done"
+  );
+
+  if(button.classList.contains("done")){
+
+    setTimeout(()=>{
+
+      state.shopping.splice(
+        index,
+        1
+      );
+
+      save();
+
+      foodTab("shopping");
+      renderAll();
+
+    },300);
+
+  }
+
+}
+
+function removeShopping(index){
+
+  state.shopping.splice(
+    index,
+    1
+  );
+
+  save();
+
+  foodTab("shopping");
+  renderAll();
+
+}
+
+function toggleFavourite(name,button){
+
+  if(
+    state.favourites
+      .includes(name)
+  ){
+
+    state.favourites =
+      state.favourites
+        .filter(
+          item=>item!==name
+        );
+
+    button.textContent=
+      "Favourite";
+
+  }else{
+
+    state.favourites
+      .push(name);
+
+    button.textContent=
+      "Saved";
+
+  }
+
+  save();
+
+}
+
+function foodTab(tab){
+
+  document
+    .querySelectorAll(".tabs button")
+    .forEach(
+      button=>
+        button.classList.remove(
+          "tab-active"
+        )
+    );
+
+  if(tab==="inventory")
+    $("tabInventory")
+      .classList.add("tab-active");
+
+  if(tab==="shopping")
+    $("tabShopping")
+      .classList.add("tab-active");
+
+  if(tab==="meals")
+    $("tabMeals")
+      .classList.add("tab-active");
+
+  if(tab==="inventory"){
+
+    $("foodBody").innerHTML=`
+
+      <input
+        class="search"
+        placeholder="Search food and household items..."
+        oninput="filterFood(this.value)"
+      >
+
+      <div
+        id="foodGrid"
+        class="foodgrid">
+
+        ${
+          state.food
+            .map(
+              food=>`
+
+                <div
+                  class="food"
+                  data-name="${safe(food.name).toLowerCase()}">
+
+                  <div class="foodimg">
+                    <span>
+                      ${
+                        food.category==="Food"
+                          ? "Food"
+                          : "Item"
+                      }
+                    </span>
+                  </div>
+
+                  <b>
+                    ${safe(food.name)}
+                  </b>
+
+                  <small>
+                    ${safe(food.qty)}
+                  </small>
+
+                  <button
+                    class="soft"
+                    style="width:100%;margin-top:8px"
+                    onclick="markUsed('${escapeAttr(food.name)}')">
+                    Used
+                  </button>
+
+                </div>
+
+              `
+            )
+            .join("")
+        }
+
+      </div>
+
+    `;
+
+  }else if(tab==="shopping"){
+
+    $("foodBody").innerHTML=`
+
+      <div class="list">
+
+        ${
+          state.shopping.length
+
+          ?
+
+          state.shopping
+            .map(
+              (item,index)=>`
+
+                <div class="row">
+
+                  <button
+                    class="check"
+                    onclick="completeShopping(${index},this)">
+                  </button>
+
+                  <div class="grow">
+
+                    <b>
+                      ${safe(item)}
+                    </b>
+
+                    <small>
+                      Shopping
+                    </small>
+
+                  </div>
+
+                  <button
+                    class="soft"
+                    onclick="removeShopping(${index})">
+                    Remove
+                  </button>
+
+                </div>
+
+              `
+            )
+            .join("")
+
+          :
+
+          `<span class="muted">
+            You're all stocked up.
+          </span>`
+
+        }
+
+      </div>
+
+      <button
+        class="primary"
+        style="margin-top:10px"
+        onclick="openQuickItem()">
+        + Item while shopping
+      </button>
+
+    `;
+
+  }else{
+
+    const meals=[
+
+      ["Creamy Chicken Pasta","30 min","4.8"],
+      ["Chicken Tacos","20 min","4.7"],
+      ["Berry Pancakes","15 min","4.9"],
+      ["Garden Pasta","25 min","4.5"],
+      ["Rice Bowl","25 min","4.8"],
+      ["Loaded Toast","10 min","4.6"]
+
+    ];
+
+    $("foodBody").innerHTML=`
+
+      <div class="head">
+
+        <input
+          class="search"
+          style="margin:0"
+          placeholder="Search meals..."
+        >
+
+        <button
+          class="primary"
+          onclick="openAI()">
+          AI Meal Maker
+        </button>
+
+      </div>
+
+      <div class="foodgrid">
+
+        ${
+          meals
+            .map(
+              meal=>`
+
+                <div class="food">
+
+                  <div class="mealimg">
+
+                    <span>
+                      ${
+                        meal[0]
+                          .split(" ")
+                          .map(
+                            word=>
+                              word[0]
+                          )
+                          .join("")
+                      }
+                    </span>
+
+                  </div>
+
+                  <b>
+                    ${safe(meal[0])}
+                  </b>
+
+                  <small>
+                    ${safe(meal[1])}
+                    · ★
+                    ${safe(meal[2])}
+                  </small>
+
+                  <div
+                    style="display:flex;gap:7px;margin-top:8px">
+
+                    <button
+                      class="soft"
+                      onclick="toggleFavourite('${escapeAttr(meal[0])}',this)">
+                      ${
+                        state.favourites
+                          .includes(meal[0])
+                          ? "Saved"
+                          : "Favourite"
+                      }
+                    </button>
+
+                    <button
+                      class="soft"
+                      onclick="openMeal('${escapeAttr(meal[0])}')">
+                      View
+                    </button>
+
+                  </div>
+
+                </div>
+
+              `
+            )
+            .join("")
+        }
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+/* =========================================
+   MEAL
+========================================= */
+
+function openMeal(name){
+
+  $("modalBox").innerHTML=`
+
+    <h2>${safe(name)}</h2>
+
+    <p class="muted">
+      The production version uses realistic AI food photography,
+      exact ingredients, cooking instructions and family preferences.
+    </p>
+
+    <div class="results-grid">
+
+      <div class="result">
+        <h4>Ingredients</h4>
+        <p class="muted">
+          Track It checks what you already have.
+        </p>
+      </div>
+
+      <div class="result">
+        <h4>Missing</h4>
+        <p class="muted">
+          Missing ingredients go to Shopping.
+        </p>
+      </div>
+
+      <div class="result">
+        <h4>Instructions</h4>
+        <p class="muted">
+          Step-by-step cooking instructions.
+        </p>
+      </div>
+
+      <div class="result">
+        <h4>Your rating</h4>
+        <p class="muted">
+          1–5 stars, favourites and notes.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="actions">
+
+      <button
+        class="primary"
+        onclick="closeModal()">
+        Done
+      </button>
+
+    </div>
+
+  `;
+
+  openModal();
+
+}
+
+/* =========================================
+   AI
+========================================= */
+
+function openAI(){
+
+  $("modalBox").innerHTML=`
+
+    <h2>Track It AI</h2>
+
+    <p class="muted">
+      Ask about meals, plans, shopping,
+      reminders, travel or the family schedule.
+    </p>
+
+    <div class="field">
+
+      <textarea
+        id="aiRequest"
+        placeholder="Make a quick dinner using what we have, or plan a sleepover next Saturday...">
+      </textarea>
+
+    </div>
+
+    <button
+      class="primary"
+      style="width:100%"
+      onclick="generateAIResult()">
+      Ask AI
+    </button>
+
+    <div id="aiResult"></div>
+
+  `;
+
+  openModal();
+
+}
+
+function generateAIResult(){
+
+  const request=
+    $("aiRequest")
+      .value
+      .trim() ||
+    "something helpful";
+
+  $("aiResult").innerHTML=`
+
+    <div class="material-preview">
+
+      <b>
+        AI plan for:
+      </b>
+
+      <p class="muted">
+        ${safe(request)}
+      </p>
+
+      <p class="muted">
+        In the production app, AI uses the family's
+        real calendar, food inventory, shopping,
+        preferences and active plans before answering
+        and can create actions.
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+/* =========================================
+   CALENDAR
+========================================= */
+
+function renderCalendar(){
+
+  const first =
+    new Date(
+      calendarDate.getFullYear(),
+      calendarDate.getMonth(),
+      1
+    );
+
+  const last =
+    new Date(
+      calendarDate.getFullYear(),
+      calendarDate.getMonth()+1,
+      0
+    );
+
+  $("monthTitle")
+    .textContent =
+      first.toLocaleDateString(
+        undefined,
+        {
+          month:"long",
+          year:"numeric"
+        }
+      );
+
+  let html =
+    [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
+      .map(
+        day=>
+          `<div class="dow">${day}</div>`
+      )
+      .join("");
+
+  for(
+    let i=0;
+    i<first.getDay();
+    i++
+  ){
+    html+="<div></div>";
+  }
+
+  for(
+    let day=1;
+    day<=last.getDate();
+    day++
+  ){
+
+    const date =
+      `${calendarDate.getFullYear()}-${String(calendarDate.getMonth()+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+
+    const events =
+      state.events.filter(
+        event=>event.date===date
+      );
+
+    html+=`
+
+      <div
+        class="day ${
+          date===new Date()
+            .toISOString()
+            .slice(0,10)
+            ? "today"
+            : ""
+        }"
+        onclick="openCalendarDate('${date}')">
+
+        ${day}
+
+        ${
+          events
+            .map(
+              event=>
+                `<div class="chip">
+                  ${safe(event.time)}
+                  ${safe(event.title)}
+                </div>`
+            )
+            .join("")
+        }
+
+      </div>
+
+    `;
+
+  }
+
+  $("calendarGrid").innerHTML=html;
+
+}
+
+function changeMonth(amount){
+
+  calendarDate.setMonth(
+    calendarDate.getMonth()+amount
+  );
+
+  renderCalendar();
+
+}
+
+function openCalendarDate(date){
+
+  const events =
+    state.events.filter(
+      event=>event.date===date
+    );
+
+  $("modalBox").innerHTML=`
+
+    <h2>
+      ${new Date(
+        date+"T12:00"
+      ).toLocaleDateString(
+        undefined,
+        {
+          weekday:"long",
+          month:"long",
+          day:"numeric"
+        }
+      )}
+    </h2>
+
+    ${
+      events.length
+
+      ?
+
+      events
+        .map(
+          event=>`
+
+            <div class="row">
+
+              <i
+                class="dot"
+                style="background:${event.color}">
+              </i>
+
+              <div class="grow">
+
+                <b>
+                  ${safe(event.time)}
+                  ·
+                  ${safe(event.title)}
+                </b>
+
+                <small>
+                  ${safe(event.person)}
+                  ·
+                  ${safe(event.type)}
+                </small>
+
+              </div>
+
+            </div>
+
+          `
+        )
+        .join("")
+
+      :
+
+      `<p class="muted">
+        No events.
+      </p>`
+
+    }
+
+    <div class="actions">
+
+      <button
+        class="primary"
+        onclick="closeModal();openEvent()">
+        + Event
+      </button>
+
+    </div>
+
+  `;
+
+  openModal();
+
+}
+
+/* =========================================
+   FAMILY
+========================================= */
+
+function renderFamily(){
+
+  $("familyTitle")
+    .textContent =
+      state.family.name ||
+      "Family account";
+
+  $("familyMembers").innerHTML =
+    state.family.members
+      .map(
+        member=>`
+
+          <div class="member">
+
+            <div
+              class="avatar"
+              style="background:${member.color}">
+              ${safe(
+                member.name.charAt(0)
+              )}
+            </div>
+
+            <div class="grow">
+
+              <b>
+                ${safe(member.name)}
+              </b>
+
+              <small>
+                ${safe(member.email)}
+                · @${safe(member.username)}
+              </small>
+
+            </div>
+
+            <span class="badge-small">
+              ${safe(member.role)}
+            </span>
+
+          </div>
+
+        `
+      )
+      .join("") ||
+
+    `<span class="muted">
+      Add family members with their
+      name, email, username and Adult/Child status.
+    </span>`;
+
+  $("familyUpcoming").innerHTML =
+    state.events
+      .slice()
+      .sort(
+        (a,b)=>
+          (a.date+a.time)
+          .localeCompare(
+            b.date+b.time
+          )
+      )
+      .slice(0,6)
+      .map(
+        event=>`
+
+          <div class="row">
+
+            <i
+              class="dot"
+              style="background:${event.color}">
+            </i>
+
+            <div class="grow">
+
+              <b>
+                ${safe(event.title)}
+              </b>
+
+              <small>
+                ${safe(event.date)}
+                ·
+                ${safe(event.time)}
+              </small>
+
+            </div>
+
+          </div>
+
+        `
+      )
+      .join("");
+
+}
+
+function openFamilyMember(){
+
+  $("modalBox").innerHTML=`
+
+    <h2>+ Family member</h2>
+
+    <p class="muted">
+      In the production app, an invitation email
+      is sent to the address entered here.
+      The person can then join the family and
+      log in with their username + family password.
+    </p>
+
+    <div class="field">
+      <label>Name</label>
+      <input
+        id="memberName"
+        placeholder="Name">
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input
+        id="memberEmail"
+        type="email"
+        placeholder="name@example.com">
+    </div>
+
+    <div class="field">
+      <label>Username</label>
+      <input
+        id="memberUsername"
+        placeholder="Family login username">
+    </div>
+
+    <div class="field">
+      <label>Adult or child?</label>
+
+      <select id="memberRole">
+
+        <option>Adult</option>
+        <option>Child</option>
+        <option>Grandparent</option>
+
+      </select>
+    </div>
+
+    <div class="actions">
+
+      <button
+        class="soft"
+        onclick="closeModal()">
+        Cancel
+      </button>
+
+      <button
+        class="primary"
+        onclick="sendFamilyInvitation()">
+        Send invitation
+      </button>
+
+    </div>
+
+  `;
+
+  openModal();
+
+}
+
+function sendFamilyInvitation(){
+
+  const name=
+    $("memberName")
+      .value
+      .trim();
+
+  const email=
+    $("memberEmail")
+      .value
+      .trim();
+
+  const username=
+    $("memberUsername")
+      .value
+      .trim();
+
+  const role=
+    $("memberRole")
+      .value;
+
+  if(!name||!email||!username){
+
+    return toast(
+      "Name, email and username are required."
+    );
+
+  }
+
+  const colors=[
+    "#4aa887",
+    "#e08b49",
+    "#6c8ee8",
+    "#c45a8e",
+    "#8a6cc9",
+    "#53a7a1"
+  ];
+
+  state.family.members.push({
+
+    name,
+    email,
+    username,
+    role,
+    color:
+      colors[
+        state.family.members.length %
+        colors.length
+      ]
+
+  });
+
+  save();
+  closeModal();
+  renderFamily();
+
+  toast(
+    "Invitation prepared for "+email
+  );
+
+}
+
+/* =========================================
+   CHAT
+========================================= */
+
+function renderChat(){
+
+  $("messages").innerHTML =
+    state.messages
+      .map(
+        message=>`
+
+          <div
+            class="bubble ${
+              message.name===
+              state.user.name
+                ? "me"
+                : ""
+            }">
+
+            <b>
+              ${safe(message.name)}
+            </b>
+
+            <br>
+
+            ${safe(message.text)}
+
+          </div>
+
+        `
+      )
+      .join("");
+
+}
+
+function sendMessage(){
+
+  const text =
+    $("messageInput")
+      .value
+      .trim();
+
+  if(!text)return;
+
+  state.messages.push({
+
+    name:
+      state.user.name ||
+      state.user.username ||
+      "You",
+
+    text
+
+  });
+
+  if(
+    /toothpaste|buy|shopping/i
+      .test(text)
+  ){
+
+    const match =
+      text.match(
+        /(?:buy|shopping)\s+(.+)/i
+      );
+
+    state.shopping.push(
+      match?.[1] ||
+      "New item"
+    );
+
+  }
+
+  save();
+
+  $("messageInput")
+    .value="";
+
+  renderChat();
+
+  toast("Message sent");
+
+}
+
+/* =========================================
+   PROFILE
+========================================= */
+
+function renderProfile(){
+
+  $("profileName")
+    .textContent =
+      state.user.name ||
+      state.user.username;
+
+  $("profileUsername")
+    .textContent =
+      "@"+state.user.username;
+
+  $("profileEmail")
+    .textContent =
+      state.user.email ||
+      "Not added";
+
+  $("profileFamily")
+    .textContent =
+      state.family.name;
+
+  $("profileRole")
+    .textContent =
+      state.user.role;
+
+}
+
+/* =========================================
+   NOTIFICATIONS
+========================================= */
+
+function renderNotifications(){
+
+  $("notificationsList").innerHTML = [
+
+    ...state.reminders.map(
+      reminder=>`
+
+        <div class="row">
+
+          <i
+            class="dot"
+            style="background:#dfa44f">
+          </i>
+
+          <div class="grow">
+
+            <b>
+              ${safe(reminder.title)}
+            </b>
+
+            <small>
+              ${safe(reminder.date)}
+              ·
+              ${safe(reminder.time)}
+            </small>
+
+          </div>
+
+        </div>
+
+      `
+    ),
+
+    ...state.events
+      .filter(
+        event=>/flight/i.test(
+          event.title
+        )
+      )
+      .map(
+        event=>`
+
+          <div class="row">
+
+            <i
+              class="dot"
+              style="background:#6c8ee8">
+            </i>
+
+            <div class="grow">
+
+              <b>
+                ${safe(event.title)}
+              </b>
+
+              <small>
+                Track It can plan around
+                this existing trip.
+              </small>
+
+            </div>
+
+          </div>
+
+        `
+      )
+
+  ].join("") ||
+
+  `<span class="muted">
+    No reminders yet.
+  </span>`;
+
+}
+
+async function enableNotifications(){
+
+  if(!("Notification" in window)){
+
+    return toast(
+      "This browser does not support notifications."
+    );
+
+  }
+
+  const permission =
+    await Notification.requestPermission();
+
+  toast(
+    permission==="granted"
+      ? "Notifications enabled where supported."
+      : "Notifications were not enabled."
+  );
+
+}
+
+/* =========================================
+   TRAVEL
+========================================= */
+
+function openTravel(){
+
+  $("modalBox").innerHTML=`
+
+    <h2>While you're away</h2>
+
+    <p class="muted">
+      The finished app should use verified live
+      event sources and your existing itinerary.
+      It must never invent events.
+    </p>
+
+    <div class="row">
+
+      <div class="grow">
+
+        <b>Existing plans</b>
+
+        <small>
+          Flights, hotels, sports and other
+          events already on the calendar.
+        </small>
+
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="grow">
+
+        <b>Free windows</b>
+
+        <small>
+          Only recommendations that fit the
+          actual time available should appear.
+        </small>
+
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="grow">
+
+        <b>Real events</b>
+
+        <small>
+          Concerts, sports, exhibitions and
+          local activities from verified sources.
+        </small>
+
+      </div>
+
+    </div>
+
+    <button
+      class="primary"
+      style="width:100%;margin-top:10px"
+      onclick="toast('Live event provider connects here in the production app.');closeModal()">
+
+      Find real nearby events
+
+    </button>
+
+  `;
+
+  openModal();
+
+}
+
+/* =========================================
+   THEME MAKER
+========================================= */
+
+function openTheme(){
+
+  $("modalBox").innerHTML=`
+
+    <h2>AI Theme Maker</h2>
+
+    <p class="muted">
+      This is a complete material system.
+      “Pink and fluffy” should make the entire
+      app feel soft, fuzzy and padded.
+      “Gold” should make the entire app feel
+      polished and metallic.
+      It changes the whole UI, not just the logo.
+    </p>
+
+    <div class="field">
+
+      <input
+        id="themeRequest"
+        placeholder="pink and fluffy, gold, blue jelly, slime, silver, holographic..."
+      >
+
+    </div>
+
+    <div class="themegrid">
+
+      <button
+        class="theme-btn pink"
+        onclick="applyTheme('pink')">
+
+        Pink + Fluffy
+
+        <small>
+          Soft plush material
+        </small>
+
+      </button>
+
+      <button
+        class="theme-btn gold"
+        onclick="applyTheme('gold')">
+
+        Gold
+
+        <small>
+          Polished metal
+        </small>
+
+      </button>
+
+      <button
+        class="theme-btn jelly"
+        onclick="applyTheme('jelly')">
+
+        Blue Jelly
+
+        <small>
+          Glossy squishy
+        </small>
+
+      </button>
+
+      <button
+        class="theme-btn clay"
+        onclick="applyTheme('clay')">
+
+        Soft Clay
+
+        <small>
+          Matte 3D
+        </small>
+
+      </button>
+
+      <button
+        class="theme-btn plush"
+        onclick="applyTheme('plush')">
+
+        Plush
+
+        <small>
+          Fuzzy padded
+        </small>
+
+      </button>
+
+      <button
+        class="theme-btn holo"
+        onclick="applyTheme('holo')">
+
+        Holographic
+
+        <small>
+          Shifting light
+        </small>
+
+      </button>
+
+      <button
+        class="theme-btn silver"
+        onclick="applyTheme('silver')">
+
+        Silver
+
+        <small>
+          Brushed metal
+        </small>
+
+      </button>
+
+      <button
+        class="theme-btn dark"
+        onclick="applyTheme('dark')">
+
+        Dark Luxury
+
+        <small>
+          Deep premium
+        </small>
+
+      </button>
+
+    </div>
+
+    <div class="material-preview">
+
+      <b>
+        Whole-app theme
+      </b>
+
+      <p class="muted">
+
+        Buttons, navigation, cards,
+        planner, calendar, Food, Chat,
+        Settings, popups and controls
+        all use the chosen material.
+
+      </p>
+
+    </div>
+
+    <div class="actions">
+
+      <button
+        class="soft"
+        onclick="closeModal()">
+        Close
+      </button>
+
+      <button
+        class="primary"
+        onclick="applyCustomTheme()">
+        Apply AI Theme
+      </button>
+
+    </div>
+
+  `;
+
+  openModal();
+
+}
+
+function applyCustomTheme(){
+
+  const request =
+    (
+      $("themeRequest").value ||
+      ""
+    ).toLowerCase();
+
+  let theme;
+
+  if(request.includes("gold")){
+
+    theme="gold";
+
+  }else if(
+    request.includes("jelly") ||
+    request.includes("slime")
+  ){
+
+    theme="jelly";
+
+  }else if(
+    request.includes("clay")
+  ){
+
+    theme="clay";
+
+  }else if(
+    request.includes("silver")
+  ){
+
+    theme="silver";
+
+  }else if(
+    request.includes("holographic") ||
+    request.includes("holo")
+  ){
+
+    theme="holo";
+
+  }else if(
+    request.includes("dark")
+  ){
+
+    theme="dark";
+
+  }else if(
+    request.includes("plush") ||
+    request.includes("fluffy")
+  ){
+
+    theme="pink";
+
+  }else{
+
+    theme="pink";
+
+  }
+
+  applyTheme(theme);
+
+}
+
+function applyTheme(theme){
+
+  state.theme=theme;
+  save();
+
+  const themes={
+
+    pink:[
+      "#f0d9ed",
+      "#fff9fd",
+      "#f5e6f2",
+      "#b454a9",
+      "#ef91d0",
+      "radial-gradient(circle at 28% 18%,#ffe7f4,#d57fc1 48%,#784d78)"
+    ],
+
+    gold:[
+      "#8c6d27",
+      "#fff9e8",
+      "#f0dda8",
+      "#9b711b",
+      "#e4bc4d",
+      "linear-gradient(130deg,#65430b,#e5b83f,#fff1a1,#8a5d0e,#edc64e)"
+    ],
+
+    jelly:[
+      "#dcecff",
+      "#f7fbff",
+      "#dceaff",
+      "#5d87e8",
+      "#9dc3ff",
+      "linear-gradient(145deg,#fff,#8fc1ff)"
+    ],
+
+    clay:[
+      "#ead0c0",
+      "#fff8f3",
+      "#f0d5c5",
+      "#ae664b",
+      "#e9a887",
+      "linear-gradient(145deg,#f6dac8,#c98266)"
+    ],
+
+    plush:[
+      "#d6b3d3",
+      "#fff5ff",
+      "#edd7eb",
+      "#98558f",
+      "#d887c9",
+      "radial-gradient(circle at 30% 20%,#ffe3f5,#bd70b2,#71486f)"
+    ],
+
+    holo:[
+      "#d9f5f2",
+      "#fff",
+      "#eaf5ff",
+      "#8b68db",
+      "#f0a3df",
+      "linear-gradient(120deg,#a7efff,#efb2ff,#fff0a6,#b8ffd7)"
+    ],
+
+    silver:[
+      "#dce0e7",
+      "#fbfcff",
+      "#e7eaf0",
+      "#657083",
+      "#aeb8c8",
+      "linear-gradient(135deg,#68717f,#f7f9fc,#929ba9,#fff)"
+    ],
+
+    dark:[
+      "#151419",
+      "#25232b",
+      "#302d37",
+      "#c995e8",
+      "#7b54a7",
+      "linear-gradient(145deg,#3b3843,#111)"
+    ]
+
+  }[theme];
+
+  [
+    "bg",
+    "surface",
+    "surface2",
+    "accent",
+    "accent2",
+    "material"
+  ].forEach(
+    (key,index)=>{
+      document.documentElement
+        .style
+        .setProperty(
+          "--"+key,
+          themes[index]
+        );
+    }
+  );
+
+  closeModal();
+  toast(
+    "Theme applied to the whole app"
+  );
+
+}
+
+function toggleSounds(){
+
+  soundEnabled =
+    !soundEnabled;
+
+  $("soundButton")
+    .textContent =
+      soundEnabled
+        ? "On"
+        : "Off";
+
+  toast(
+    soundEnabled
+      ? "Theme sounds on"
+      : "Theme sounds off"
+  );
+
+}
+
+/* =========================================
+   STARTUP
+========================================= */
+
+if(
+  state.user.email ||
+  state.family.password
+){
+
+  $("auth")
+    .classList
+    .add("hidden");
+
+  $("app")
+    .classList
+    .remove("hidden");
+
+  applyTheme(state.theme);
+
+  renderAll();
+
+}else{
+
+  $("auth")
+    .classList
+    .remove("hidden");
+
+  switchAuth("login");
+
+}
+
+</script>
+
+</body>
+</html>
